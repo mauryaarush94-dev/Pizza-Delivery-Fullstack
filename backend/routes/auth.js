@@ -34,7 +34,6 @@ router.post("/register", async (req, res) => {
 
     const exists = await User.findOne({ email });
 
-    // Existing account but not verified
     if (exists && !exists.verified) {
       const verificationToken = crypto.randomBytes(32).toString("hex");
 
@@ -92,9 +91,9 @@ ${verificationLink}`
     });
 
     res.json({
-      message: "Registration successful. Please check your email to verify your account."
+      message:
+        "Registration successful. Please check your email to verify your account."
     });
-
   } catch (error) {
     console.log("Registration error:", error.message);
 
@@ -121,7 +120,6 @@ router.get("/verify/:token", async (req, res) => {
     await user.save();
 
     res.send("Email verified successfully! You can now login.");
-
   } catch (error) {
     console.log("Verification error:", error.message);
     res.status(500).send("Verification failed.");
@@ -131,6 +129,8 @@ router.get("/verify/:token", async (req, res) => {
 // LOGIN + JWT
 router.post("/login", async (req, res) => {
   try {
+    console.log("LOGIN: request received");
+
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -138,6 +138,8 @@ router.post("/login", async (req, res) => {
         message: "Please enter email and password"
       });
     }
+
+    console.log("LOGIN: checking user");
 
     const user = await User.findOne({ email });
 
@@ -147,11 +149,15 @@ router.post("/login", async (req, res) => {
       });
     }
 
+    console.log("LOGIN: user found");
+
     if (!user.verified) {
       return res.status(400).json({
         message: "Please verify your email first"
       });
     }
+
+    console.log("LOGIN: checking password");
 
     const isMatch = await bcrypt.compare(password, user.password);
 
@@ -160,6 +166,10 @@ router.post("/login", async (req, res) => {
         message: "Incorrect password"
       });
     }
+
+    console.log("LOGIN: password correct");
+
+    console.log("LOGIN: JWT secret available:", !!process.env.JWT_SECRET);
 
     const token = jwt.sign(
       {
@@ -173,6 +183,8 @@ router.post("/login", async (req, res) => {
       }
     );
 
+    console.log("LOGIN: JWT created");
+
     res.json({
       message: "Login successful",
       token,
@@ -183,9 +195,8 @@ router.post("/login", async (req, res) => {
         role: user.role
       }
     });
-
   } catch (error) {
-    console.log("Login error:", error.message);
+    console.log("LOGIN ERROR:", error.message);
 
     res.status(500).json({
       message: "Server error"
