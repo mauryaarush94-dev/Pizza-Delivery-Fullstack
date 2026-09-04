@@ -5,6 +5,9 @@ const dotenv = require("dotenv");
 
 dotenv.config();
 
+// Safe check: secret value नहीं दिखाएगा, सिर्फ true/false बताएगा
+console.log("MONGO_URI available:", !!process.env.MONGO_URI);
+
 const authRoutes = require("./routes/auth");
 const orderRoutes = require("./routes/orders");
 
