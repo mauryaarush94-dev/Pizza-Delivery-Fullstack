@@ -57,27 +57,36 @@ function PizzaBuilder() {
       return;
     }
 
-    const response = await fetch("http://localhost:5000/api/orders", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        base,
-        sauce,
-        cheese,
-        vegetables,
-        amount: total
-      })
-    });
+    try {
+      const response = await fetch(
+        "https://pizza-delivery-fullstack.onrender.com/api/orders",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            base,
+            sauce,
+            cheese,
+            vegetables,
+            amount: total
+          })
+        }
+      );
 
-    const data = await response.json();
+      const data = await response.json();
 
-    if (response.ok) {
-      alert(`Payment Successful! Order placed successfully 🎉\nTotal: ₹${total}`);
-    } else {
-      alert(data.message);
+      if (response.ok) {
+        alert(
+          `Payment Successful! Order placed successfully 🎉\nTotal: ₹${total}`
+        );
+      } else {
+        alert(data.message);
+      }
+    } catch (error) {
+      alert("Unable to connect to server");
     }
   };
 
@@ -123,9 +132,17 @@ function PizzaBuilder() {
 
         <h3>Order Summary</h3>
 
-        <p><b>Base:</b> {base}</p>
-        <p><b>Sauce:</b> {sauce}</p>
-        <p><b>Cheese:</b> {cheese}</p>
+        <p>
+          <b>Base:</b> {base}
+        </p>
+
+        <p>
+          <b>Sauce:</b> {sauce}
+        </p>
+
+        <p>
+          <b>Cheese:</b> {cheese}
+        </p>
 
         <p>
           <b>Vegetables:</b>{" "}

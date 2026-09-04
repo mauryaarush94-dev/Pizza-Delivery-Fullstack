@@ -6,16 +6,23 @@ function Register() {
   const [password, setPassword] = useState("");
 
   const register = async () => {
-    const response = await fetch("http://localhost:5000/api/auth/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ name, email, password })
-    });
+    try {
+      const response = await fetch(
+        "https://pizza-delivery-fullstack.onrender.com/api/auth/register",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ name, email, password })
+        }
+      );
 
-    const data = await response.json();
-    alert(data.message);
+      const data = await response.json();
+      alert(data.message);
+    } catch (error) {
+      alert("Unable to connect to server");
+    }
   };
 
   return (
